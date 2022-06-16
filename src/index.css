@@ -136,11 +136,17 @@ code {
   margin-top: 5px;
  
 }
+
+.tagInput {
+  color:white
+}
 .tagInput input {
   font-size: 16px;
   margin-top: 5px;
- 
-}
+ }
+ .taglist{
+  margin-left: 50px;
+ }
 textarea:focus, input:focus {
   outline:none
 }

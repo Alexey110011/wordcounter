@@ -87,18 +87,20 @@ const TagList =({items, onEdit = f=>f, handleChange = f=>f})=>{
     if(items){
     return (
         <div className='tagInput'>
-        <input type= "search" placeholder = "Search by tag" onChange={handleChange}></input>
-            {items.map(item=> 
+           <input type= "search" placeholder = "Search by tag" onChange={handleChange}></input>
+           <div className = "taglist">Tag List</div>
+           {items.map(item=> 
                 <Tag onClick ={onEdit} key = {item.id} {...item}/>
-            )}
+            )} 
+            
         </div>
     )}
 }
-const ItemList = ({currentItems,m, onRemove=f=>f, onEdit = f=>f, searchingPost=f=>f, handleChange=f=>f}) =>{
+const ItemList = ({currentItems,search, onRemove=f=>f, onEdit = f=>f, searchingPost=f=>f, handleChange=f=>f}) =>{
     if(currentItems||currentItems===null){
  return(
      <div>
-         <PostList items= {currentItems} onRemove = {onRemove} onEdit = {onEdit} m={m}/>
+         <PostList items= {currentItems} onRemove = {onRemove} onEdit = {onEdit} search={search}/>
          <TagList items = {currentItems} onEdit = {onEdit} handleChange = {handleChange}/>
      </div>
  )}
