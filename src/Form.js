@@ -323,7 +323,7 @@ export const Form = ()=> {
             <div className = "container">
             <Note onHandleSubmit = {handleSubmit} onHandleEdit = {handleEdit1} changePost = {changePost} handleClear = {handleClear} editedItem = {editedItem}/>
            <span className = "sort"> Sorting by page<input type ="checkbox" onChange = {sortingPage}></input></span>
-            <PaginatedItems items = {items} itemsPerPage = {6} search = {search} onRemove = {handleRemove} onEdit = {handleEdit} handleChange = {handleChange} />
+            <PaginatedItems items = {items} itemsPerPage = {2} search = {search} onRemove = {handleRemove} onEdit = {handleEdit} handleChange = {handleChange} />
             <WordCounter items ={items} />
           </div>
     )}else{
