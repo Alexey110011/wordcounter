@@ -55,8 +55,9 @@ code {
 
 .buttonEdit:hover{
   background-color: green;
-  color:white
+  color:white;
 }
+
 .page-item, .page-link, .paginate, .nn {
   color:white
 }
@@ -134,8 +135,7 @@ code {
 }
 .span {
   margin-top: 5px;
- 
-}
+ }
 
 .tagInput {
   color:white

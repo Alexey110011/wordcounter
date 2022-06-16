@@ -1,8 +1,8 @@
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect, useRef, useCallback} from 'react'
 import ReactPaginate from 'react-paginate'
 import  {v4} from 'uuid'
 
-const Note =({onHandleSubmit=f=>f, onHandleEdit =f=>f,changePost=f=>f,changeTag=f=>f,handleClear = f=>f, editedItem})=> {
+const Note =({onHandleSubmit=f=>f, onHandleEdit =f=>f,changePost=f=>f,handleClear = f=>f, editedItem})=> {
     const noteRef = useRef()
     let _note
     if(editedItem.length!==0){
@@ -17,14 +17,13 @@ const Note =({onHandleSubmit=f=>f, onHandleEdit =f=>f,changePost=f=>f,changeTag=
     else if(editedItem.length!==0){
         changePost(_note)
         onHandleEdit()
-        changeTag(_note)
     }
     handleClear() 
     noteRef.current.value=''
     }
     return(
         <form className = "sometext" onSubmit = {submit}>
-            <textarea className="placeholder" ref = {noteRef} placeholder = {"Enter text"}></textarea>
+            <textarea className="placeholder" ref = {noteRef} placeholder = "Enter text"></textarea>
             <button className = "save" onClick = {submit}>Save</button> 
         </form>
     )
@@ -74,13 +73,12 @@ const PostList =({items,search,onRemove = f=>f, onEdit=f=>f})=>{
     )}
 }
 
-const Tag = ({tag})=> {
+const Tag = ({tag, onEdit = f=>f})=> {
     if(tag){
     return(
-         <div>
+         <div onClick={onEdit}>
              {tag}
-             
-         </div>)}
+        </div>)}
 }
 
 const TagList =({items, onEdit = f=>f, handleChange = f=>f})=>{
@@ -90,13 +88,13 @@ const TagList =({items, onEdit = f=>f, handleChange = f=>f})=>{
            <input type= "search" placeholder = "Search by tag" onChange={handleChange}></input>
            <div className = "taglist">Tag List</div>
            {items.map(item=> 
-                <Tag onClick ={onEdit} key = {item.id} {...item}/>
+                <Tag onEdit ={()=>onEdit(item.id)} key = {item.id} {...item}/>
             )} 
             
         </div>
     )}
 }
-const ItemList = ({currentItems,search, onRemove=f=>f, onEdit = f=>f, searchingPost=f=>f, handleChange=f=>f}) =>{
+const ItemList = ({currentItems,search, onRemove=f=>f, onEdit = f=>f, handleChange=f=>f}) =>{
     if(currentItems||currentItems===null){
  return(
      <div>
@@ -106,7 +104,7 @@ const ItemList = ({currentItems,search, onRemove=f=>f, onEdit = f=>f, searchingP
  )}
 }
 
-const PaginatedItems= ({items,itemsPerPage,search, onRemove=f=>f,handleChange= f=>f, handleEdit=f=>f, searchingPost=f=>f, editedTag=f=>f, editedTagPost1=f=>f, editedTagPost=f=>f, onEdit=f=>f})=>{
+const PaginatedItems= ({items,itemsPerPage,search, onRemove=f=>f, onEdit=f=>f, handleChange=f=>f})=>{
     const [currentItems, setCurrentItems] = useState(null)
     const [pageCount, setPageCount] = useState(0)
     const [itemOffset, setItemOffset] = useState(0)
@@ -161,7 +159,7 @@ const handlePageClick =(event) =>{
         activeClassName="active"
         renderOnZeroPageCount={null}/>
     </div>
-    <ItemList currentItems = {currentItems} search={search} onRemove = {onRemove} onEdit ={onEdit} onHandleEdit={onEdit} handleChange = {handleChange}/>
+    <ItemList currentItems = {currentItems} search={search} onRemove = {onRemove} onEdit ={onEdit} handleChange = {handleChange} />
     </div>
         )
     } else {
@@ -189,7 +187,7 @@ const handlePageClick =(event) =>{
         activeClassName="active"
         renderOnZeroPageCount={null}/>
     </div>
-  <ItemList currentItems = {currentItems} search = {search} onRemove = {onRemove} onEdit ={onEdit} onHandleEdit={onEdit} handleChange = {handleChange}/>
+  <ItemList currentItems = {currentItems} search = {search} onRemove = {onRemove} onEdit ={onEdit} />
 </div>
     )}
 }
@@ -199,11 +197,11 @@ const WordCounter = ({items})=> {
     const [all, setAll]=useState('')
     const [wordsCounToArray, setWordsCounToArray] = useState([])
    
-    function addWordCounts(word) {
+    const addWordCounts=useCallback((word)=> {
         wordCounts[word]= (wordCounts[word])?wordCounts[word]+1:1
-    }
+    },[wordCounts])
    
-    function countWordsInText(text){
+    const countWordsInText=useCallback((text)=>{
        const words = text
        .toString()
        .toLowerCase()
@@ -212,7 +210,7 @@ const WordCounter = ({items})=> {
        words.filter(word=>word)
        .forEach(word=>addWordCounts(word)) 
        return wordCounts
-    }
+    },[addWordCounts,wordCounts])
 
     useEffect(()=>{
         const all1 = items.map(item=>item.post).join(' ')
@@ -227,7 +225,8 @@ const WordCounter = ({items})=> {
         const count2 = Object.entries(count1).sort()
         console.log(count2)      
         setWordsCounToArray(count2)
-    }, [all]) 
+    }, [countWordsInText,all]) 
+
      if(items.length!==0){
 return(
         <div className ="nn">
@@ -239,12 +238,9 @@ return(
         else {return null}
         }
          
-  export const Form = ()=> {
+export const Form = ()=> {
     const [items, setItems] = useState([])
     const [editedItem,setEditedItem] =useState([])
-    const [editedItem1, setEditedItem1] = useState([])
-    const [editedTag1,setEditedTag1] = useState([])
-    const [editedTagPost, setEditedTagPost] = useState([])
     const [search, setSearch] = useState('')
     const [sortPaging, setSortPaging] = useState(false)  
 
@@ -304,68 +300,41 @@ return(
             }
         }
         const editedItem1 = obj3(editedItem, post)
-        setEditedItem1(editedItem1)
+        setEditedItem(editedItem1)
         console.log(editedItem1)
-}
+    }
    
     function handleClear(){
         const editedItem = []
-        const editedItem1 = []
         setEditedItem(editedItem)
-        setEditedItem1(editedItem1)
-        }
+    }
         
- function searchingPost(id) {
-    const editedTag1_1 = items.filter(item=>  
-        items.id===id)
-        console.log(editedTag1_1)
-       
-    const editedTag0_1 =items.map(item=>{  
-        const etag = item.post.match(/(#[a-z\d-]+)/gim)
-        if((etag)&&etag[0]===editedItem[0].tag[0]){
-            return item.post
-            }else { 
-        return null}
-            })
-        const editedTag_1 = editedTag0_1.filter(item=>
-            item!==null)
-
-        const editedTagPost1_1 = items.filter(post=> 
-        post.id===id);
-        console.log(editedTagPost1_1)
-        const editedTagPost_1 = editedTagPost1_1[0].post                             
-        console.log(editedTagPost_1)
-        setEditedTag1(editedTag1_1)
-        setEditedTagPost(editedTagPost_1) 
-        console.log(editedTag_1)
-        }
-            
-        function handleChange(e) {
-        let search_1 = e.target.value
-        setSearch(search_1)
-        console.log(search, typeof m)}
+    function handleChange(e) {
+    let search_1 = e.target.value
+    setSearch(search_1)
+    console.log(search)}
         
-function sortingPage() {
-    setSortPaging(!sortPaging)
-}
+    function sortingPage() {
+        setSortPaging(!sortPaging)
+    }
 
-if(sortPaging) {
-    return(
+    if(sortPaging) {
+        return(
             <div className = "container">
             <Note onHandleSubmit = {handleSubmit} onHandleEdit = {handleEdit1} changePost = {changePost} handleClear = {handleClear} editedItem = {editedItem}/>
            <span className = "sort"> Sorting by page<input type ="checkbox" onChange = {sortingPage}></input></span>
-            <PaginatedItems items = {items} itemsPerPage = {2} search = {search} onRemove = {handleRemove} onEdit = {handleEdit} handleChange = {handleChange} searchingPost = {searchingPost}/>
+            <PaginatedItems items = {items} itemsPerPage = {6} search = {search} onRemove = {handleRemove} onEdit = {handleEdit} handleChange = {handleChange} />
             <WordCounter items ={items} />
           </div>
     )}else{
        return(
-        <div className = "container">
-        <Note onHandleSubmit = {handleSubmit} onHandleEdit = {handleEdit1} changePost = {changePost} handleClear = {handleClear} editedItem = {editedItem}/>
-        <span className = "sort"> Sorting by page<input type ="checkbox" onChange = {sortingPage}></input></span>
-        <ItemList currentItems = {items} search={search} onRemove = {handleRemove} onEdit ={handleEdit} handleChange = {handleChange}/>
-        <WordCounter items ={items}/>
-      </div>
-       ) 
+            <div className = "container">
+            <Note onHandleSubmit = {handleSubmit} onHandleEdit = {handleEdit1} changePost = {changePost} handleClear = {handleClear} editedItem = {editedItem}/>
+            <span className = "sort"> Sorting by page<input type ="checkbox" onChange = {sortingPage}></input></span>
+            <ItemList currentItems = {items} search={search} onRemove = {handleRemove} onEdit ={handleEdit} handleChange = {handleChange}/>
+            <WordCounter items ={items}/>
+        </div>
+        ) 
     }
 }
 
