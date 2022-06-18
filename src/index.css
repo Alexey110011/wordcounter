@@ -99,6 +99,7 @@ background-color:rgb(18, 168, 76)
   position: absolute;
   left:500px;
   top: 0px;
+  color:white
 }
 .pageSort {
   visibility: visible;
