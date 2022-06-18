@@ -66,19 +66,7 @@ code {
   position:relative
 }
 
-#tag {
-  margin:5px
-}
-
-#text {
-  width:250px;
-  height:150px;
-  font-family: 'Courier New', Courier, monospace ;
-  margin: 5px 0 0px 5px;
-  padding: 5px;
-  font-size: 16px;
- }
-  .save {
+.save {
     position: relative;
     bottom: 8px;
     left:2px;
@@ -90,25 +78,12 @@ code {
     width:50px
   }
   
-  #taglist, #postlist, #post1 {
-    margin: 5px;
-    font-family: 'Courier New', Courier, monospace;
-    width:250px
-  }
-  #searchtag {
-  font-size: 16px;
-  font-family: 'Courier New', Courier, monospace ;
-}
-#par {
-  margin-bottom: 5px;
-}
-#post2 {
-  margin-top:18px;
-  width:250px
-}
-.pagination li{
+  .pagination li{
   display:inline;
   margin-left: 10px;
+}
+.page-link:focus {
+background-color:rgb(18, 168, 76)
 }
 .pagination {
   position:absolute;
@@ -120,7 +95,7 @@ code {
   top:162px;
   left:149px
 }
-.nn {
+.wordcounter {
   position: absolute;
   left:500px;
   top: 0px;
@@ -152,4 +127,7 @@ textarea:focus, input:focus {
 }
 .sort {
   color:white
+}
+.tag {
+  cursor:pointer
 }

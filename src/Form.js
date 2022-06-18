@@ -37,12 +37,12 @@ const Post =({post, search, onRemove = f=>f, onEdit=f=>f})=> {
             <button className = "buttonRemove" onClick = {onRemove}>Remove</button>
             <button className = "buttonEdit" onClick = {onEdit}>Edit</button>
         </div>
-    )
-} 
+        )
+    } 
         const regex = new RegExp(`(${search})`,'gi')
         const parts = post.split(regex) 
         console.log(parts)
-        return (
+        return(
         <div className = "post">
         <span>
             {parts.filter(String).map((part,i)=>{
@@ -76,7 +76,7 @@ const PostList =({items,search,onRemove = f=>f, onEdit=f=>f})=>{
 const Tag = ({tag, onEdit = f=>f})=> {
     if(tag){
     return(
-         <div onClick={onEdit}>
+         <div className = "tag"onClick={onEdit}>
              {tag}
         </div>)}
 }
@@ -138,26 +138,26 @@ const handlePageClick =(event) =>{
         return (
             <div>
                 <div className = "wrapper">
-        <span className = "paginate">{paginate}</span>
-        <ReactPaginate 
-        nextLabel=" >"
-        onPageChange={handlePageClick}
-        pageRangeDisplayed={3}
-        marginPagesDisplayed={2}
-        pageCount={pageCount}
-        previousLabel="< "
-        pageClassName="page-item"
-        pageLinkClassName="page-link"
-        previousClassName="page-item"
-        previousLinkClassName="page-link"
-        nextClassName="page-item"
-        nextLinkClassName="page-link"
-        breakLabel="..."
-        breakClassName="page-item"
-        breakLinkClassName="page-link"
-        containerClassName="pagination"
-        activeClassName="active"
-        renderOnZeroPageCount={null}/>
+            <span className = "paginate">{paginate}</span>
+            <ReactPaginate 
+            nextLabel=" >"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={3}
+            marginPagesDisplayed={2}
+            pageCount={pageCount}
+            previousLabel="< "
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            breakLabel="..."
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            containerClassName="pagination"
+            activeClassName="active"
+            renderOnZeroPageCount={null}/>
     </div>
     <ItemList currentItems = {currentItems} search={search} onRemove = {onRemove} onEdit ={onEdit} handleChange = {handleChange} />
     </div>
@@ -187,7 +187,7 @@ const handlePageClick =(event) =>{
         activeClassName="active"
         renderOnZeroPageCount={null}/>
     </div>
-  <ItemList currentItems = {currentItems} search = {search} onRemove = {onRemove} onEdit ={onEdit} />
+    <ItemList currentItems = {currentItems} search = {search} onRemove = {onRemove} onEdit ={onEdit} />
 </div>
     )}
 }
@@ -196,7 +196,8 @@ const WordCounter = ({items})=> {
     const [wordCounts, setWordCounts] = useState({})
     const [all, setAll]=useState('')
     const [wordsCounToArray, setWordsCounToArray] = useState([])
-   
+    const [sortByNumber, setSortByNumber] = useState(false)
+
     const addWordCounts=useCallback((word)=> {
         wordCounts[word]= (wordCounts[word])?wordCounts[word]+1:1
     },[wordCounts])
@@ -205,7 +206,7 @@ const WordCounter = ({items})=> {
        const words = text
        .toString()
        .toLowerCase()
-       .split(/\W+/)
+       .split(/[\s!"№;%:?*()@#$^&*_+<>/]/)
        .sort();
        words.filter(word=>word)
        .forEach(word=>addWordCounts(word)) 
@@ -216,25 +217,31 @@ const WordCounter = ({items})=> {
         const all1 = items.map(item=>item.post).join(' ')
         setAll(all1)
         setWordCounts({})
-    }, [items])
+    }, [items,countWordsInText])
 
     useEffect(()=>{
         const count1 = countWordsInText(all)
         console.log(count1)
-        setWordCounts(count1)
-        const count2 = Object.entries(count1).sort()
-        console.log(count2)      
-        setWordsCounToArray(count2)
-    }, [countWordsInText,all]) 
+        setWordCounts(count1) 
+    }, [countWordsInText,all])
 
+    useEffect(()=>{
+        const count2 = (sortByNumber===false)?(Object.entries(wordCounts).sort()):(Object.entries(wordCounts).sort((a,b)=>b[1]-a[1]))
+        setWordsCounToArray(count2)
+    }, [all, countWordsInText, wordCounts,sortByNumber])
+  
+    const byNumber=()=> {
+       setSortByNumber(!sortByNumber)
+    }
+       
      if(items.length!==0){
-return(
-        <div className ="nn">
-            Word Counter
-            {wordsCounToArray.map((item,i)=>
-                <div key = {i}> {item[0]} : {item[1]}</div>)
-            }
-        </div>)}
+        return(
+            <div className ="wordcounter">
+                <span>Word Counter</span>     <input type = "checkbox" onChange = {byNumber}></input>Sorting by frequency
+                {wordsCounToArray.map((item,i)=>
+                    <div key = {i}> {item[0]} : {item[1]}</div>)
+                }
+            </div>)}
         else {return null}
         }
          
@@ -244,9 +251,8 @@ export const Form = ()=> {
     const [search, setSearch] = useState('')
     const [sortPaging, setSortPaging] = useState(false)  
 
-    
     function handleSubmit(post){
-        const pattern = /(#[a-z\d-]+)/gi
+        const pattern = /(#[a-zа-я\d-]+)/gi
         const tag = post.match(pattern)
         console.log(tag)
         if(pattern.test(post)){
@@ -294,14 +300,15 @@ export const Form = ()=> {
                 objec.splice(0,1,{
                 post:post,
                 id:objec[0].id,
-                tag:post.match(/(#[a-z\d-]+)/g)
+                tag:post.match(/(#[a-zа-я\d-]+)/g)
             });
                 return objec
             }
         }
-        const editedItem1 = obj3(editedItem, post)
-        setEditedItem(editedItem1)
-        console.log(editedItem1)
+
+    const editedItem1 = obj3(editedItem, post)
+    setEditedItem(editedItem1)
+    console.log(editedItem1)
     }
    
     function handleClear(){
@@ -312,20 +319,21 @@ export const Form = ()=> {
     function handleChange(e) {
     let search_1 = e.target.value
     setSearch(search_1)
-    console.log(search)}
-        
-    function sortingPage() {
-        setSortPaging(!sortPaging)
-    }
+    console.log(search_1)
+   }
 
-    if(sortPaging) {
+   function sortingPage() {
+        setSortPaging(!sortPaging)
+   }
+
+     if(sortPaging) {
         return(
             <div className = "container">
             <Note onHandleSubmit = {handleSubmit} onHandleEdit = {handleEdit1} changePost = {changePost} handleClear = {handleClear} editedItem = {editedItem}/>
            <span className = "sort"> Sorting by page<input type ="checkbox" onChange = {sortingPage}></input></span>
             <PaginatedItems items = {items} itemsPerPage = {2} search = {search} onRemove = {handleRemove} onEdit = {handleEdit} handleChange = {handleChange} />
             <WordCounter items ={items} />
-          </div>
+           </div>
     )}else{
        return(
             <div className = "container">
@@ -333,9 +341,7 @@ export const Form = ()=> {
             <span className = "sort"> Sorting by page<input type ="checkbox" onChange = {sortingPage}></input></span>
             <ItemList currentItems = {items} search={search} onRemove = {handleRemove} onEdit ={handleEdit} handleChange = {handleChange}/>
             <WordCounter items ={items}/>
-        </div>
+            </div>
         ) 
     }
 }
-
-
