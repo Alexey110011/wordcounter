@@ -39,13 +39,15 @@ const Post =({post, search, onRemove = f=>f, onEdit=f=>f})=> {
         </div>
         )
     } 
-        const regex = new RegExp(`(${search})`,'gi')
-        const parts = post.split(regex) 
+    const regex = new RegExp(`(${search})`,'gi')
+    const parts = post.split(regex)
+
+    if(regex.test(post)){
         console.log(parts)
         return(
         <div className = "post">
         <span>
-            {parts.filter(String).map((part,i)=>{
+            {parts.map((part,i)=>{
             return regex.test(part)?(
             <mark style={{marginLeft:"-2px"}} key = {i}>{part}</mark>)
             :(
@@ -56,8 +58,8 @@ const Post =({post, search, onRemove = f=>f, onEdit=f=>f})=> {
             <button className="buttonEdit" onClick = {onEdit}>Edit</button>
         </span>
         </div>
-        )
-}
+        )} else {return null}
+    }
 
 const PostList =({items,search,onRemove = f=>f, onEdit=f=>f})=>{
     if(items){
@@ -71,7 +73,8 @@ const PostList =({items,search,onRemove = f=>f, onEdit=f=>f})=>{
             )}
         </div>
     )}
-}
+   }
+
 
 const Tag = ({tag, onEdit = f=>f})=> {
     if(tag){
@@ -88,9 +91,8 @@ const TagList =({items, onEdit = f=>f, handleChange = f=>f})=>{
            <input type= "search" placeholder = "Search by tag" onChange={handleChange}></input>
            <div className = "taglist">Tag List</div>
            {items.map(item=> 
-                <Tag onEdit ={()=>onEdit(item.id)} key = {item.id} {...item}/>
-            )} 
-            
+              <Tag onEdit ={()=>onEdit(item.id)} key = {item.id} {...item}/>
+           )}
         </div>
     )}
 }
@@ -214,6 +216,7 @@ const WordCounter = ({items})=> {
     },[addWordCounts,wordCounts])
 
     useEffect(()=>{
+    
         const all1 = items.map(item=>item.post).join(' ')
         setAll(all1)
         setWordCounts({})
@@ -320,7 +323,7 @@ export const Form = ()=> {
     let search_1 = e.target.value
     setSearch(search_1)
     console.log(search_1)
-   }
+    }
 
    function sortingPage() {
         setSortPaging(!sortPaging)
