@@ -95,7 +95,7 @@ background-color:rgb(18, 168, 76)
   top:162px;
   left:149px
 }
-.wordcounter {
+.wordCounterWrapper {
   position: absolute;
   left:500px;
   top: 0px;
@@ -130,4 +130,34 @@ textarea:focus, input:focus {
 }
 .tag {
   cursor:pointer
+}
+.show {
+  visibility:hidden;
+  position:absolute
+}
+
+@media (min-width:340px) and (max-width:480px) {
+  .wordCounterWrapper{
+    position:static
+  }
+  .wordcounter1 {
+    visibility:hidden
+  }
+  .wordcounter {
+    position:static;
+    margin-top:10px;
+    visibility: visible;
+   }
+  .show {
+    visibility:visible;
+    position:static;
+    color:white;
+    margin-left: 155px;
+  }
+ }
+ @media (min-width:481px) and (max-width:620px) {
+  .wordCounterWrapper{
+    position:static;
+    margin-top: 20px;
+  }
 }

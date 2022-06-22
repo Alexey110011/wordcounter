@@ -111,7 +111,7 @@ const PaginatedItems= ({items,itemsPerPage,search, onRemove=f=>f, onEdit=f=>f, h
     const [pageCount, setPageCount] = useState(0)
     const [itemOffset, setItemOffset] = useState(0)
     const [paginate,setPaginate] = useState()
-    
+   
     useEffect(()=>{
         let endOffset = itemOffset + itemsPerPage
         if(items) {
@@ -199,7 +199,8 @@ const WordCounter = ({items})=> {
     const [all, setAll]=useState('')
     const [wordsCounToArray, setWordsCounToArray] = useState([])
     const [sortByNumber, setSortByNumber] = useState(false)
-
+    const [show, setShow] = useState(false)
+   
     const addWordCounts=useCallback((word)=> {
         wordCounts[word]= (wordCounts[word])?wordCounts[word]+1:1
     },[wordCounts])
@@ -236,15 +237,22 @@ const WordCounter = ({items})=> {
     const byNumber=()=> {
        setSortByNumber(!sortByNumber)
     }
-       
+    const showCounter = ()=>{
+        setShow(!show)
+        } 
+    
      if(items.length!==0){
         return(
-            <div className ="wordcounter">
-                <span>Word Counter</span>     <input type = "checkbox" onChange = {byNumber}></input>Sorting by frequency
-                {wordsCounToArray.map((item,i)=>
-                    <div key = {i}> {item[0]} : {item[1]}</div>)
+            <div className = "wordCounterWrapper">
+                {<div className ="show"> Show words<input type = "checkbox" onChange = {showCounter}></input> </div>}
+                <div className ={(show)?"wordcounter":"wordcounter1"}>
+                <b>Word Counter</b> <input style ={{marginLeft:"15px"}} type = "checkbox" onChange = {byNumber}></input>Sorting by frequency
+                    {wordsCounToArray.map((item,i)=>
+                <div key = {i}> {item[0]} : {item[1]}</div>)
                 }
-            </div>)}
+                </div>
+            </div>)
+            }
         else {return null}
         }
          
@@ -253,7 +261,7 @@ export const Form = ()=> {
     const [editedItem,setEditedItem] =useState([])
     const [search, setSearch] = useState('')
     const [sortPaging, setSortPaging] = useState(false)  
-
+ 
     function handleSubmit(post){
         const pattern = /(#[a-zа-я\d-]+)/gi
         const tag = post.match(pattern)
@@ -328,7 +336,7 @@ export const Form = ()=> {
    function sortingPage() {
         setSortPaging(!sortPaging)
    }
-
+   
      if(sortPaging) {
         return(
             <div className = "container">
